@@ -19,7 +19,7 @@ class TvApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF0A0A0F),
         fontFamily: "SF Pro Display",
       ),
-      home: LoginPage(),
+      home: const LoginPage(),
     );
   }
 }

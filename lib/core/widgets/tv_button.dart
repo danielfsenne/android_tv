@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TvButton extends StatefulWidget {
   final String title;
@@ -27,34 +28,43 @@ class _TvButtonState extends State<TvButton> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return FocusableActionDetector(
-      focusNode: widget.focusNode,
-      onFocusChange: (f) => setState(() => focused = f),
-      actions: {
-        ActivateIntent: CallbackAction(onInvoke: (_) {
-          widget.onPressed();
-          return null;
-        })
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        height: 60,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        decoration: BoxDecoration(
-          color: focused ? Colors.white : Colors.grey.shade800,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Text(
-          widget.title,
-          style: TextStyle(
-            fontSize: 22,
-            color: focused ? Colors.black : Colors.white,
+@override
+Widget build(BuildContext context) {
+  return Focus(
+    focusNode: widget.focusNode,
+    child: GestureDetector(
+      onTap: widget.onPressed,
+      child: Shortcuts(
+        shortcuts: <LogicalKeySet, Intent>{
+          LogicalKeySet(LogicalKeyboardKey.enter): const ActivateIntent(),
+          LogicalKeySet(LogicalKeyboardKey.space): const ActivateIntent(),
+        },
+        child: Actions(
+          actions: <Type, Action<Intent>>{
+            ActivateIntent: CallbackAction<ActivateIntent>(
+              onInvoke: (intent) => widget.onPressed(),
+            ),
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            height: 60,
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            decoration: BoxDecoration(
+              color: widget.focusNode.hasFocus ? Colors.white : Colors.grey.shade800,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Text(
+              widget.title,
+              style: TextStyle(
+                fontSize: 22,
+                color: widget.focusNode.hasFocus ? Colors.black : Colors.white,
+              ),
+            ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

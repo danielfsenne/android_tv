@@ -4,10 +4,12 @@ class TvInput extends StatefulWidget {
   final String label;
   final bool obscure;
   final FocusNode focusNode;
+  final TextEditingController controller;
 
   const TvInput({
     required this.label,
     required this.focusNode,
+    required this.controller,
     this.obscure = false,
     super.key,
   });
@@ -22,7 +24,6 @@ class _TvInputState extends State<TvInput> {
   @override
   void initState() {
     super.initState();
-
     widget.focusNode.addListener(() {
       setState(() => isFocused = widget.focusNode.hasFocus);
     });
@@ -50,6 +51,7 @@ class _TvInputState extends State<TvInput> {
             : [],
       ),
       child: TextField(
+        controller: widget.controller,
         focusNode: widget.focusNode,
         obscureText: widget.obscure,
         style: const TextStyle(fontSize: 22, color: Colors.white),
