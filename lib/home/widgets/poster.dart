@@ -16,7 +16,6 @@ class _TvPosterState extends State<TvPoster> {
   @override
   void initState() {
     super.initState();
-
     focusNode.addListener(() {
       setState(() => focused = focusNode.hasFocus);
     });
@@ -24,7 +23,7 @@ class _TvPosterState extends State<TvPoster> {
 
   @override
   void dispose() {
-    focusNode.dispose(); // libera o foco para evitar vazamentos
+    focusNode.dispose();
     super.dispose();
   }
 
@@ -33,28 +32,32 @@ class _TvPosterState extends State<TvPoster> {
     return FocusableActionDetector(
       focusNode: focusNode,
       onFocusChange: (f) => setState(() => focused = f),
-      child: Transform.scale(
-        scale: focused ? 1.12 : 1.0,
-        alignment: Alignment.center,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 170),
-          width: 180,
-          height: 260,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            image: DecorationImage(
-              image: AssetImage("assets/posters/${widget.imageIndex % 6}.jpg"),
-              fit: BoxFit.cover,
+      child: MouseRegion(
+        onEnter: (_) => setState(() => focused = true),
+        onExit: (_) => setState(() => focused = false),
+        child: AnimatedScale(
+          scale: focused ? 1.12 : 1.0,
+          duration: const Duration(milliseconds: 200),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 180,
+            height: 260,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              image: DecorationImage(
+                image: AssetImage("assets/posters/${widget.imageIndex}.jpg"),
+                fit: BoxFit.cover,
+              ),
+              boxShadow: focused
+                  ? [
+                      BoxShadow(
+                        color: Colors.white.withOpacity(0.3),
+                        blurRadius: 20,
+                        spreadRadius: 2,
+                      )
+                    ]
+                  : [],
             ),
-            boxShadow: focused
-                ? [
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.3),
-                      blurRadius: 20,
-                      spreadRadius: 2,
-                    )
-                  ]
-                : [],
           ),
         ),
       ),

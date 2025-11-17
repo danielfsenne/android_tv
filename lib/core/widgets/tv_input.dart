@@ -25,7 +25,9 @@ class _TvInputState extends State<TvInput> {
   void initState() {
     super.initState();
     widget.focusNode.addListener(() {
-      setState(() => isFocused = widget.focusNode.hasFocus);
+      setState(() {
+        isFocused = widget.focusNode.hasFocus;
+      });
     });
   }
 

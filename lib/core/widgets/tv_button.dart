@@ -28,43 +28,53 @@ class _TvButtonState extends State<TvButton> {
     });
   }
 
-@override
-Widget build(BuildContext context) {
-  return Focus(
-    focusNode: widget.focusNode,
-    child: GestureDetector(
-      onTap: widget.onPressed,
-      child: Shortcuts(
-        shortcuts: <LogicalKeySet, Intent>{
-          LogicalKeySet(LogicalKeyboardKey.enter): const ActivateIntent(),
-          LogicalKeySet(LogicalKeyboardKey.space): const ActivateIntent(),
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onPressed, // ← AGORA O CLICK FUNCIONA!
+      child: FocusableActionDetector(
+        focusNode: widget.focusNode,
+        onFocusChange: (f) => setState(() => focused = f),
+
+        shortcuts: const {
+          SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
         },
-        child: Actions(
-          actions: <Type, Action<Intent>>{
-            ActivateIntent: CallbackAction<ActivateIntent>(
-              onInvoke: (intent) => widget.onPressed(),
-            ),
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            height: 60,
-            alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            decoration: BoxDecoration(
-              color: widget.focusNode.hasFocus ? Colors.white : Colors.grey.shade800,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Text(
-              widget.title,
-              style: TextStyle(
-                fontSize: 22,
-                color: widget.focusNode.hasFocus ? Colors.black : Colors.white,
-              ),
+
+        actions: {
+          ActivateIntent: CallbackAction(onInvoke: (_) {
+            widget.onPressed();
+            return null;
+          }),
+        },
+
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          height: 60,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          decoration: BoxDecoration(
+            color: focused ? Colors.white : Colors.grey.shade800,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: focused
+                ? [
+                    BoxShadow(
+                      color: Colors.white.withOpacity(0.4),
+                      blurRadius: 12,
+                      spreadRadius: 1,
+                    ),
+                  ]
+                : [],
+          ),
+          child: Text(
+            widget.title,
+            style: TextStyle(
+              fontSize: 22,
+              color: focused ? Colors.black : Colors.white,
             ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
